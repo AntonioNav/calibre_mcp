@@ -1,0 +1,13 @@
+#!/usr/bin/with-contenv bash
+
+export CALIBRE_LIBRARY_PATH="/books"
+
+echo "Verificando dependencias de Python para MCP..."
+# Instalamos solo si faltan (o forzamos actualización rápida)
+pip3 install --no-cache-dir -r /config/calibre_mcp/requirements.txt mcp starlette uvicorn sse-starlette
+
+echo "Iniciando servidor MCP de Calibre..."
+cd /config/calibre_mcp
+
+# Ejecutamos el script que ya sabemos que funciona
+exec python3 start_mcp.py
