@@ -3,10 +3,10 @@ import subprocess
 import json
 import shutil
 from typing import List, Optional, Dict, Any
-from mcp.server import MCPServer
+from fastmcp import FastMCP
 
 # Initialize the MCP server
-mcp = MCPServer("Calibre MCP Server")
+mcp = FastMCP("Calibre MCP Server")
 
 # Configuration
 CALIBRE_LIBRARY_PATH = os.environ.get("CALIBRE_LIBRARY_PATH")

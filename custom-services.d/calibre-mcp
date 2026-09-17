@@ -1,0 +1,18 @@
+#!/usr/bin/with-contenv bash
+# Supervised service: runs the Calibre MCP server (SSE) inside the
+# calibre-web container, as the abc user so calibredb writes to /books
+# with the same ownership calibre-web uses.
+
+export CALIBRE_LIBRARY_PATH="${CALIBRE_LIBRARY_PATH:-/books}"
+export HOME=/config
+CODE_DIR="${MCP_CODE_DIR:-/opt/calibre_mcp}"
+
+if [ ! -x /config/mcp-venv/bin/python ]; then
+  echo "**** calibre-mcp venv missing, check custom-cont-init.d logs ****"
+  exit 1
+fi
+
+echo "**** starting calibre MCP server on ${MCP_HOST:-0.0.0.0}:${MCP_PORT:-8084} ****"
+cd "${CODE_DIR}" || exit 1
+
+exec s6-setuidgid abc /config/mcp-venv/bin/python start_mcp.py

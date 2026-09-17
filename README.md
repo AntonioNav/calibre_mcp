@@ -71,7 +71,17 @@ python3 server.py
    docker-compose up --build
    ```
 
-   *Note: When using with an MCP client like Claude Desktop, you will need to configure the client to run the `docker run` command. See [Docker Setup Guide](docs/docker_setup.md) for detailed configuration instructions.*
+    *Note: When using with an MCP client like Claude Desktop, you will need to configure the client to run the `docker run` command. See [Docker Setup Guide](docs/docker_setup.md) for detailed configuration instructions.*
+
+### Running inside linuxserver/calibre-web
+
+Instead of a separate container, you can run this MCP server **inside** an existing
+`lscr.io/linuxserver/calibre-web` container using linuxserver's `custom-cont-init.d`
+and `custom-services.d` hooks. The server runs as a supervised s6 service (SSE on
+port 8084) with its own isolated virtualenv.
+
+See the [calibre-web Integration Guide](docs/calibre_web_integration.md) for the full
+compose snippet and troubleshooting.
 
 
 ## Client Configuration

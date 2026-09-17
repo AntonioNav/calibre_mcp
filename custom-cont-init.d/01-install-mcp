@@ -1,0 +1,34 @@
+#!/bin/bash
+# Installs the Calibre MCP server into a dedicated venv, isolated from
+# calibre-web's own /lsiopy venv. Idempotent: only reinstalls when
+# requirements.txt changes.
+set -e
+
+VENV=/config/mcp-venv
+CODE="${MCP_CODE_DIR:-/opt/calibre_mcp}"
+STAMP="${VENV}/.requirements.sha256"
+
+if [ ! -d "${CODE}" ]; then
+  echo "**** calibre_mcp code not found at ${CODE}, skipping MCP setup ****"
+  exit 0
+fi
+
+echo "**** setting up calibre-mcp virtualenv ****"
+
+if [ ! -x "${VENV}/bin/python" ]; then
+  python3 -m venv "${VENV}"
+fi
+
+CURRENT_HASH=$(sha256sum "${CODE}/requirements.txt" | awk '{print $1}')
+if [ ! -f "${STAMP}" ] || [ "$(cat "${STAMP}")" != "${CURRENT_HASH}" ]; then
+  echo "**** installing calibre-mcp python dependencies ****"
+  "${VENV}/bin/pip" install --no-cache-dir -U pip wheel
+  "${VENV}/bin/pip" install --no-cache-dir -r "${CODE}/requirements.txt"
+  echo "${CURRENT_HASH}" > "${STAMP}"
+else
+  echo "**** calibre-mcp dependencies up to date, skipping install ****"
+fi
+
+chown -R abc:abc "${VENV}"
+
+echo "**** calibre-mcp virtualenv ready ****"
